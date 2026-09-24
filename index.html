@@ -1,13 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<title>个人工作台</title>
-<script>
-window.location.href="https://zhangzhiyu520.github.io/workbench.html"
-</script>
+    <meta charset="UTF-8">
+    <title>我的个人主页</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            background:#1a1a2e;
+            color:#fff;
+            font-family:system-ui,sans-serif;
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+        }
+        .box{
+            text-align:center;
+            padding:40px;
+            border-radius:16px;
+            background:rgba(255,255,255,0.08);
+            backdrop-filter:blur(10px);
+        }
+        h1{
+            font-size:32px;
+            margin-bottom:16px;
+            color:#7cf;
+        }
+        p{
+            font-size:20px;
+            opacity:0.85;
+            line-height:2;
+        }
+        .btn{
+            display:inline-block;
+            margin-top:30px;
+            padding:12px 30px;
+            background:#409eff;
+            color:white;
+            text-decoration:none;
+            border-radius:999px;
+            transition:0.3s;
+        }
+        .btn:hover{
+            background:#2b7cd3;
+        }
+    </style>
 </head>
 <body>
-正在跳转工作台...
+    <div class="box">
+        <h1>人生不是赛跑</h1>
+        <p>是一次慢慢理解自己的过程</p>
+        <p>不必追赶别人的脚步</p>
+        <a class="btn" href="#">慢慢来</a>
+    </div>
 </body>
 </html>
