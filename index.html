@@ -1,13 +1,243 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<title>个人工作台</title>
-<script>
-window.location.href="https://zhangzhiyu520.github.io/workbench.html"
-</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人工作台</title>
+    <link rel="manifest" href="./manifest.json">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+        body{background:#12141d;color:#eef;padding:12px;min-height:100vh}
+        .container{max-width:1200px;margin:0 auto;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+        .card{background:#1e2233;border-radius:14px;padding:16px;border:1px solid #333850}
+        h2{font-size:18px;margin-bottom:12px;color:#79b8ff}
+        button{background:#2b7bff;color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;margin:4px}
+        button:hover{background:#1f64d9}
+        input,textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid #444;background:#282c3f;color:#eee;margin:6px 0}
+        .todo-item{display:flex;align-items:center;gap:8px;padding:8px;background:#282c3f;border-radius:8px;margin:6px 0}
+        .high{border-left:4px solid #ff5555}.mid{border-left:4px solid #ffaa22}.low{border-left:4px solid #22bb66}
+        .record-item{padding:6px;border-bottom:1px solid #333}
+    </style>
 </head>
 <body>
-正在跳转工作台...
+    <div class="container">
+        <!-- 时钟 -->
+        <div class="card">
+            <h2>🕒 当前时间</h2>
+            <div id="clock" style="font-size:32px;text-align:center"></div>
+            <div id="date" style="text-align:center;margin-top:8px"></div>
+        </div>
+        <!-- 天气 -->
+        <div class="card">
+            <h2>🌤️ 天气查询</h2>
+            <input type="text" id="cityInput" placeholder="输入城市名">
+            <button onclick="getWeather()">查询天气</button>
+            <div id="weatherResult"></div>
+        </div>
+        <!-- 每日故事 -->
+        <div class="card">
+            <h2>📖 每日故事</h2>
+            <div id="story"></div>
+            <button onclick="readText(document.getElementById('story').innerText)">朗读</button>
+        </div>
+        <!-- 每日吃喝推荐 -->
+        <div class="card">
+            <h2>🍱 今日吃喝</h2>
+            <div id="foodDrink"></div>
+        </div>
+        <!-- 英语练习 -->
+        <div class="card">
+            <h2>📚 英语练习</h2>
+            <div id="englishSentence"></div>
+            <button onclick="readText(document.getElementById('englishSentence').innerText)">朗读句子</button>
+        </div>
+        <!-- 每日诗词 -->
+        <div class="card">
+            <h2>🎋 每日古诗词</h2>
+            <div id="poem"></div>
+        </div>
+        <!-- 励志语录 -->
+        <div class="card">
+            <h2>✨ 每日语录</h2>
+            <div id="quote"></div>
+        </div>
+        <!-- 待办清单（优先级） -->
+        <div class="card">
+            <h2>✅ 待办清单</h2>
+            <input type="text" id="todoInput" placeholder="输入任务">
+            <select id="todoPriority">
+                <option value="low">低优先级</option>
+                <option value="mid">中优先级</option>
+                <option value="high">高优先级</option>
+            </select>
+            <button onclick="addTodo()">添加任务</button>
+            <div id="todoList"></div>
+        </div>
+        <!-- 番茄钟 -->
+        <div class="card">
+            <h2>🍅 番茄计时器</h2>
+            <div id="tomatoTime" style="font-size:28px;text-align:center">25:00</div>
+            <button onclick="startTomato()">开始</button>
+            <button onclick="pauseTomato()">暂停</button>
+            <button onclick="resetTomato()">重置</button>
+        </div>
+        <!-- 计算器 -->
+        <div class="card">
+            <h2>🧮 简易计算器</h2>
+            <input type="text" id="calcInput">
+            <br>
+            <button onclick="calcInput.value+='1'">1</button><button onclick="calcInput.value+='2'">2</button><button onclick="calcInput.value+='3'">3</button><button onclick="calcInput.value+='+'">+</button>
+            <button onclick="calcInput.value+='4'">4</button><button onclick="calcInput.value+='5'">5</button><button onclick="calcInput.value+='6'">6</button><button onclick="calcInput.value+='-'">-</button>
+            <button onclick="calcInput.value+='7'">7</button><button onclick="calcInput.value+='8'">8</button><button onclick="calcInput.value+='9'">9</button><button onclick="calcInput.value+='*'">×</button>
+            <button onclick="calcInput.value+='0'">0</button><button onclick="calcInput.value+='.'">.</button><button onclick="calcInput.value+='/'">÷</button>
+            <button onclick="calcInput.value=''">C</button>
+            <button onclick="calculate()">=</button>
+        </div>
+        <!-- 目标倒计时 -->
+        <div class="card">
+            <h2>⏳ 目标倒计时</h2>
+            <input type="datetime-local" id="targetTime">
+            <button onclick="startCountdown()">开始倒计时</button>
+            <div id="countResult"></div>
+        </div>
+        <!-- 记账本 -->
+        <div class="card">
+            <h2>💰 记账本</h2>
+            <input type="text" id="recordName" placeholder="项目名称">
+            <input type="number" id="recordMoney" placeholder="金额">
+            <select id="recordType">
+                <option value="in">收入</option>
+                <option value="out">支出</option>
+            </select>
+            <button onclick="addRecord()">添加记录</button>
+            <div id="recordList"></div>
+            <div>合计：<span id="totalMoney">0</span></div>
+        </div>
+        <!-- 自定义壁纸 -->
+        <div class="card">
+            <h2>🖼️ 背景壁纸</h2>
+            <input type="text" id="bgUrl" placeholder="图片链接">
+            <button onclick="setBg()">设置背景</button>
+        </div>
+    </div>
+<script>
+// 语音朗读
+function readText(text){
+    const utter = new SpeechSynthesisUtterance(text);
+    speechSynthesis.speak(utter);
+}
+// 时钟
+function updateClock(){
+    const now = new Date();
+    document.getElementById('clock').innerText = now.toLocaleTimeString();
+    document.getElementById('date').innerText = now.toLocaleDateString();
+}
+setInterval(updateClock,1000);updateClock();
+// 每日内容
+const storyList = ["小兔子在森林发现一条发光小溪，顺着水流找到了藏满星光的山洞。","一只猫头鹰每天晚上收集人间的美梦，存放在大树树洞。","小鱼想看看月亮，荷叶把露珠送给小鱼，露珠里装着小小的月亮。"]
+const foodList = ["午餐：番茄牛腩+米饭，饮品：柠檬水","晚餐：虾仁蔬菜沙拉，饮品：无糖绿茶","午餐：菌菇鸡汤面，饮品：鲜榨橙汁"]
+const engList = ["Today is a nice day. 今天是美好的一天。","Keep going, never give up. 坚持下去，永不放弃。","Believe yourself. 相信你自己。"]
+const poemList = ["床前明月光，疑是地上霜。——李白《静夜思》","春眠不觉晓，处处闻啼鸟。——孟浩然《春晓》","举头望明月，低头思故乡。——李白《静夜思》"]
+const quoteList = ["慢慢来，好戏都在烟火里。","前路浩浩荡荡，万事尽可期待。","坚持不是硬扛，是每天小小的继续。"]
+const dayIndex = new Date().getDate()%3;
+document.getElementById('story').innerText = storyList[dayIndex];
+document.getElementById('foodDrink').innerText = foodList[dayIndex];
+document.getElementById('englishSentence').innerText = engList[dayIndex];
+document.getElementById('poem').innerText = poemList[dayIndex];
+document.getElementById('quote').innerText = quoteList[dayIndex];
+//天气
+async function getWeather(){
+    const city = document.getElementById("cityInput").value;
+    const res = await fetch(`https://wttr.in/${city}?format=3`);
+    const txt = await res.text();
+    document.getElementById("weatherResult").innerText = txt;
+}
+//待办
+let todoList = JSON.parse(localStorage.getItem("todo"))||[];
+function renderTodo(){
+    const wrap = document.getElementById("todoList");wrap.innerHTML="";
+    todoList.forEach((item,i)=>{
+        const div = document.createElement("div");
+        div.className = `todo-item ${item.priority}`;
+        div.innerHTML = `<input type="checkbox" ${item.done?"checked":""} onchange="toggleTodo(${i})">${item.text}<button onclick="delTodo(${i})">删除</button>`
+        wrap.appendChild(div);
+    })
+    localStorage.setItem("todo",JSON.stringify(todoList));
+}
+function addTodo(){
+    const txt = document.getElementById("todoInput").value;
+    const pri = document.getElementById("todoPriority").value;
+    todoList.push({text:txt,priority:pri,done:false});
+    renderTodo();document.getElementById("todoInput").value="";
+}
+function toggleTodo(i){todoList[i].done=!todoList[i].done;renderTodo()}
+function delTodo(i){todoList.splice(i,1);renderTodo()}
+renderTodo();
+//番茄钟
+let tomatoTimer,tomatoSec=25*60;
+function updateTomatoView(){
+    const m = Math.floor(tomatoSec/60);
+    const s = tomatoSec%60;
+    document.getElementById("tomatoTime").innerText = String(m).padStart(2,'0')+":"+String(s).padStart(2,'0');
+}
+function startTomato(){tomatoTimer = setInterval(()=>{tomatoSec--;updateTomatoView();if(tomatoSec<=0){clearInterval(tomatoTimer);alert("番茄结束！")}},1000)}
+function pauseTomato(){clearInterval(tomatoTimer)}
+function resetTomato(){clearInterval(tomatoTimer);tomatoSec=25*60;updateTomatoView()}
+updateTomatoView();
+//计算器
+function calculate(){
+    try{
+        const val = eval(document.getElementById("calcInput").value)
+        document.getElementById("calcInput").value = val;
+    }catch(e){
+        document.getElementById("calcInput").value = "错误";
+    }
+}
+//倒计时
+let countTimer;
+function startCountdown(){
+    clearInterval(countTimer);
+    const target = new Date(document.getElementById("targetTime").value).getTime();
+    countTimer = setInterval(()=>{
+        const diff = target - Date.now();
+        if(diff<=0){clearInterval(countTimer);document.getElementById("countResult").innerText="时间到！";return}
+        const d=Math.floor(diff/(1000*3600*24));
+        const h=Math.floor((diff%(1000*3600*24))/(1000*3600));
+        const mi=Math.floor((diff%(1000*3600))/(1000*60));
+        const s=Math.floor((diff%(1000*60))/1000);
+        document.getElementById("countResult").innerText = `${d}天 ${h}时 ${mi}分 ${s}秒`
+    },1000)
+}
+//记账
+let records = JSON.parse(localStorage.getItem("records"))||[];
+function renderRecord(){
+    const wrap = document.getElementById("recordList");wrap.innerHTML="";
+    let total=0;
+    records.forEach((r,i)=>{
+        const div=document.createElement("div");div.className="record-item";
+        const num = Number(r.money);
+        if(r.type=="in") total += num;else total -= num;
+        div.innerText = `${r.name} ${r.type=="in"?"收入":"支出"}:${r.money}`;
+        const delBtn = document.createElement("button");delBtn.innerText="删";delBtn.onclick=()=>{records.splice(i,1);renderRecord()};div.appendChild(delBtn);
+        wrap.appendChild(div);
+    })
+    document.getElementById("totalMoney").innerText = total;
+    localStorage.setItem("records",JSON.stringify(records));
+}
+function addRecord(){
+    const name = document.getElementById("recordName").value;
+    const money = document.getElementById("recordMoney").value;
+    const type = document.getElementById("recordType").value;
+    records.push({name,money,type});renderRecord();
+    document.getElementById("recordName").value="";document.getElementById("recordMoney").value="";
+}
+renderRecord();
+//背景
+function setBg(){
+    const url = document.getElementById("bgUrl").value;
+    document.body.style.backgroundImage=`url(${url})`;
+    document.body.style.backgroundSize="cover";
+}
+</script>
 </body>
 </html>
